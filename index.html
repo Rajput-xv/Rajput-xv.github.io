@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Yash Verma - Full Stack Developer</title>
+
+    <!-- Performance Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://api.microlink.io">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
@@ -18,8 +24,8 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Yash Verma - Full Stack Developer">
     <meta property="og:description" content="Full Stack Developer & Software Developer | React, Node.js, Open Source, Cloud Enthusiast">
-    <meta property="og:url" content="https://rajput-xv.github.io/Portfolio/">
-    <meta property="og:image" content="https://rajput-xv.github.io/Portfolio/images/preview.png">
+    <meta property="og:url" content="https://rajputxv.me/">
+    <meta property="og:image" content="https://rajputxv.me/images/preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
 
@@ -27,7 +33,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Yash Verma - Full Stack Developer">
     <meta name="twitter:description" content="Full Stack Developer & Software Developer | React, Node.js, Open Source, Cloud Enthusiast">
-    <meta name="twitter:image" content="https://rajput-xv.github.io/Portfolio/images/preview.png">
+    <meta name="twitter:image" content="https://rajputxv.me/images/preview.png">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -40,8 +46,25 @@
 </head>
 
 <body>
+    <!-- Loading Animation -->
+    <div class="preloader" id="preloader">
+        <div class="loader">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-text">Yash<span>.dev</span></div>
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
     <!-- Navigation -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
         <div class="container">
             <a href="#home" class="logo">Yash<span>.dev</span></a>
             <div class="nav-menu" id="navMenu">
@@ -60,7 +83,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
+    <section id="home" class="hero" role="banner">
         <div class="hero-particles"></div>
         <div class="container hero-content">
             <div class="hero-text">
@@ -107,11 +130,11 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="about">
+    <section id="about" class="about" role="region" aria-labelledby="about-heading">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Get To Know</span>
-                <h2 class="section-title">About Me</h2>
+                <h2 class="section-title" id="about-heading">About Me</h2>
             </div>
             
             <div class="about-content">
@@ -372,16 +395,25 @@
                 <h2 class="section-title">Featured Projects</h2>
             </div>
             
+            <!-- Project Filters -->
+            <!-- <div class="project-filters">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="fullstack">Full Stack</button>
+                <button class="filter-btn" data-filter="frontend">Frontend</button>
+                <button class="filter-btn" data-filter="backend">Backend</button>
+                <button class="filter-btn" data-filter="ml">AI/ML</button>
+            </div> -->
+            
             <div class="projects-grid">
                 <!-- Project 1: Most Popular - OCR/AI Project -->
-                <div class="project-card">
+                <div class="project-card" data-category="ml fullstack">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Health Report Analyzer">
                         <div class="project-overlay">
                             <a href="https://github.com/Rajput-xv/Health-Report-Analyzer" target="_blank" class="project-link">
                                 <i class="fab fa-github"></i>
                             </a>
-                            <a href="https://health-report-analyzer.vercel.app/" target="_blank" class="project-link">
+                            <a href="https://health-report-analyzer-client.vercel.app/" target="_blank" class="project-link">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -399,7 +431,7 @@
                 </div>
                 
                 <!-- Project 2: Social Impact Project -->
-                <div class="project-card">
+                <div class="project-card" data-category="fullstack">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Crisis Nexus">
                         <div class="project-overlay">
@@ -424,7 +456,7 @@
                 </div>
                 
                 <!-- Project 3: Full-Stack Marketplace -->
-                <div class="project-card">
+                <div class="project-card" data-category="fullstack">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Indian Bazaar">
                         <div class="project-overlay">
@@ -449,7 +481,7 @@
                 </div>
 
                 <!-- Project 4: Game -->
-                <div class="project-card">
+                <div class="project-card" data-category="full stack backend">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Connect 4 Game">
                         <div class="project-overlay">
@@ -474,7 +506,7 @@
                 </div>
                 
                 <!-- Project 5: Real-time Features -->
-                <div class="project-card">
+                <div class="project-card" data-category="fullstack">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Auction System">
                         <div class="project-overlay">
@@ -499,7 +531,7 @@
                 </div>
 
                 <!-- Project 6: Shows MySQL + Cloud Integration -->
-                <div class="project-card">
+                <div class="project-card" data-category="fullstack backend">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Ratings & Review System">
                         <div class="project-overlay">
@@ -524,7 +556,7 @@
                 </div>
 
                 <!-- Project 7: Enterprise-Level Dashboard -->
-                <div class="project-card">
+                <div class="project-card" data-category="frontend">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Retail Sales Management">
                         <div class="project-overlay">
@@ -546,7 +578,7 @@
                 </div>
 
                 <!-- Project 8: TypeScript - Shows Modern Skills -->
-                <div class="project-card">
+                <div class="project-card" data-category="frontend">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="CaseFlow">
                         <div class="project-overlay">
@@ -571,7 +603,7 @@
                 </div>
                 
                 <!-- Project 9: Browser Extension - Shows Versatility -->
-                <div class="project-card">
+                <div class="project-card" data-category="frontend">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="Auto-Fill Assistant">
                         <div class="project-overlay">
@@ -592,7 +624,7 @@
                 </div>
                 
                 <!-- Project 10: Hackathon Project -->
-                <div class="project-card">
+                <div class="project-card" data-category="fullstack">
                     <div class="project-image">
                         <img src="images/bg_1.jpg" alt="SynapseQ">
                         <div class="project-overlay">
@@ -622,8 +654,44 @@
         </div>
     </section>
 
+    <!-- Statistics Section -->
+    <!-- <section id="stats" class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card" data-aos="fade-up">
+                    <div class="stat-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" data-target="30">0</div>
+                    <div class="stat-label">Happy Clients</div>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-icon">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">Cups of Coffee</div>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="stat-number" data-target="15">0</div>
+                    <div class="stat-label">Awards Won</div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
     <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <section id="contact" class="contact" role="region" aria-labelledby="contact-heading">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Get In Touch</span>

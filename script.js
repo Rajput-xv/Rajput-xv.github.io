@@ -1,3 +1,281 @@
+// Preloader
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    setTimeout(() => {
+        preloader.classList.add('hidden');
+        setTimeout(() => {
+            preloader.style.display = 'none';
+        }, 500);
+    }, 1000);
+});
+
+// Scroll Progress Bar
+function updateScrollProgress() {
+    const scrollProgress = document.getElementById('scrollProgress');
+    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = (window.scrollY / scrollableHeight) * 100;
+    scrollProgress.style.width = scrolled + '%';
+}
+
+window.addEventListener('scroll', updateScrollProgress);
+
+// Custom Cursor
+const cursor = document.getElementById('customCursor');
+const cursorFollower = document.getElementById('cursorFollower');
+let cursorX = 0;
+let cursorY = 0;
+let followerX = 0;
+let followerY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    cursorX = e.clientX;
+    cursorY = e.clientY;
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+});
+
+// Smooth follower animation
+function animateFollower() {
+    followerX += (cursorX - followerX) * 0.1;
+    followerY += (cursorY - followerY) * 0.1;
+    cursorFollower.style.left = followerX + 'px';
+    cursorFollower.style.top = followerY + 'px';
+    requestAnimationFrame(animateFollower);
+}
+animateFollower();
+
+// Cursor interactions
+const interactiveElements = document.querySelectorAll('a, button, .project-card, .social-icon, .btn');
+interactiveElements.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursorFollower.classList.add('active');
+    });
+    el.addEventListener('mouseleave', () => {
+        cursorFollower.classList.remove('active');
+    });
+});
+
+// Project Filters
+const filterBtns = document.querySelectorAll('.filter-btn');
+const projectCards = document.querySelectorAll('.project-card');
+
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+
+        projectCards.forEach(card => {
+            const categories = card.getAttribute('data-category');
+            
+            if (filter === 'all' || categories.includes(filter)) {
+                card.classList.remove('filtered-out');
+                setTimeout(() => {
+                    card.style.position = 'relative';
+                }, 400);
+            } else {
+                card.classList.add('filtered-out');
+            }
+        });
+    });
+});
+
+// Statistics Counter Animation
+const statNumbers = document.querySelectorAll('.stat-number');
+let statsAnimated = false;
+
+function animateStats() {
+    if (statsAnimated) return;
+    
+    statNumbers.forEach(stat => {
+        const target = parseInt(stat.getAttribute('data-target'));
+        const duration = 2000;
+        const increment = target / (duration / 16);
+        let current = 0;
+
+        const updateCounter = () => {
+            current += increment;
+            if (current < target) {
+                stat.textContent = Math.ceil(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                stat.textContent = target + '+';
+            }
+        };
+
+        updateCounter();
+    });
+
+    statsAnimated = true;
+}
+
+// Trigger stats animation when visible
+const statsSection = document.getElementById('stats');
+if (statsSection) {
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateStats();
+            }
+        });
+    }, { threshold: 0.5 });
+
+    statsObserver.observe(statsSection);
+}
+
+// 3D Tilt Effect for Cards
+function tiltCard(e, card) {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = (y - centerY) / 10;
+    const rotateY = (centerX - x) / 10;
+
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+}
+
+function resetTilt(card) {
+    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+}
+
+// Apply tilt to project cards, skill cards, etc.
+const tiltCards = document.querySelectorAll('.project-card, .skill-category, .education-card, .stat-card');
+tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => tiltCard(e, card));
+    card.addEventListener('mouseleave', () => resetTilt(card));
+});
+
+// Magnetic Button Effect
+function magneticEffect(e, button) {
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    button.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+}
+
+function resetMagnetic(button) {
+    button.style.transform = 'translate(0, 0)';
+}
+
+const magneticButtons = document.querySelectorAll('.btn, .social-icon, .filter-btn');
+magneticButtons.forEach(btn => {
+    btn.addEventListener('mousemove', (e) => magneticEffect(e, btn));
+    btn.addEventListener('mouseleave', () => resetMagnetic(btn));
+});
+
+// Parallax Effect on Scroll
+window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const parallaxElements = document.querySelectorAll('.hero-particles, .hero-image');
+    
+    parallaxElements.forEach(el => {
+        const speed = el.getAttribute('data-speed') || 0.5;
+        el.style.transform = `translateY(${scrolled * speed}px)`;
+    });
+});
+
+// Enhanced Keyboard Navigation
+document.addEventListener('keydown', (e) => {
+    // Escape to close mobile menu
+    if (e.key === 'Escape') {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    }
+});
+
+// Add smooth reveal animations on scroll
+const revealElements = document.querySelectorAll('.section-header, .about-text, .contact-info');
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, { threshold: 0.1 });
+
+revealElements.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'all 0.8s ease';
+    revealObserver.observe(el);
+});
+
+// Lazy Loading for Images
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const src = img.getAttribute('data-src');
+                if (src) {
+                    img.src = src;
+                    img.classList.add('loaded');
+                    img.removeAttribute('data-src');
+                }
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+
+    const lazyImages = document.querySelectorAll('img[data-src]');
+    lazyImages.forEach(img => imageObserver.observe(img));
+}
+
+// Easter Egg - Konami Code
+let konamiCode = [];
+const konamiPattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+document.addEventListener('keydown', (e) => {
+    konamiCode.push(e.key);
+    konamiCode = konamiCode.slice(-10);
+
+    if (konamiCode.join(',') === konamiPattern.join(',')) {
+        // Easter egg activated!
+        document.body.style.animation = 'rainbow 2s linear infinite';
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rainbow {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        setTimeout(() => {
+            document.body.style.animation = '';
+        }, 5000);
+
+        console.log('%c🎮 KONAMI CODE ACTIVATED! 🎮', 'font-size: 24px; color: #6366f1; font-weight: bold;');
+    }
+});
+
+// Performance: Throttle scroll events
+function throttle(func, delay) {
+    let lastCall = 0;
+    return function(...args) {
+        const now = new Date().getTime();
+        if (now - lastCall < delay) return;
+        lastCall = now;
+        return func(...args);
+    };
+}
+
+// Update scroll-dependent functions with throttle
+window.addEventListener('scroll', throttle(() => {
+    highlightNavigation();
+    updateScrollProgress();
+}, 100));
+
+
 // Navbar Scroll Effect
 const navbar = document.getElementById('navbar');
 
@@ -227,11 +505,6 @@ document.head.appendChild(style);
 
 createParticles();
 
-// Preloader (Optional)
-window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-});
-
 // Mouse move effect for hero image
 const heroImage = document.querySelector('.image-wrapper');
 
@@ -330,7 +603,6 @@ tooltipStyle.textContent = `
 `;
 document.head.appendChild(tooltipStyle);
 
-// Lazy loading for images
 if ('IntersectionObserver' in window) {
     const imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {

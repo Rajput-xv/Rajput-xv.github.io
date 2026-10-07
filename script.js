@@ -170,14 +170,21 @@ magneticButtons.forEach(btn => {
     btn.addEventListener('mouseleave', () => resetMagnetic(btn));
 });
 
-// Parallax Effect on Scroll
+// Parallax Effect on Scroll (elements cached, updates batched per frame)
+const parallaxElements = document.querySelectorAll('.hero-particles, .hero-image');
+let parallaxTicking = false;
+
 window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const parallaxElements = document.querySelectorAll('.hero-particles, .hero-image');
-    
-    parallaxElements.forEach(el => {
-        const speed = el.getAttribute('data-speed') || 0.5;
-        el.style.transform = `translateY(${scrolled * speed}px)`;
+    if (parallaxTicking) return;
+    parallaxTicking = true;
+
+    requestAnimationFrame(() => {
+        const scrolled = window.scrollY;
+        parallaxElements.forEach(el => {
+            const speed = el.getAttribute('data-speed') || 0.5;
+            el.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+        parallaxTicking = false;
     });
 });
 
@@ -187,6 +194,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
     }
 });
 
@@ -294,6 +302,7 @@ const navMenu = document.getElementById('navMenu');
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
+    hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active'));
 });
 
 // Close mobile menu when clicking on a link
@@ -302,14 +311,16 @@ navLinks.forEach(link => {
     link.addEventListener('click', () => {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
     });
 });
 
 // Typing Animation
 const typingText = document.querySelector('.typing-text');
 const texts = [
-    'Full Stack Developer',
-    'Software Developer',
+    'Full Stack Developer @ CashKaro',
+    'AWS Certified Architect',
+    'Open Source Contributor',
     'Photographer & Traveller',
     'Problem Solver'
 ];
@@ -348,20 +359,42 @@ function typeText() {
 // Start typing animation
 typeText();
 
-// Smooth Scroll for Navigation Links
+// Smooth Scroll for Navigation Links (eased, distance-scaled speed)
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function smoothScrollTo(targetY) {
+    if (prefersReducedMotion) {
+        window.scrollTo(0, targetY);
+        return;
+    }
+
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 1) return;
+
+    // Longer jumps take longer: 700ms minimum, capped at 1400ms
+    const duration = Math.min(1400, Math.max(700, Math.abs(distance) * 0.5));
+    const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (startTime === null) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+        if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
-        
+
         if (target) {
             const offset = 80;
-            const targetPosition = target.offsetTop - offset;
-            
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
+            smoothScrollTo(target.offsetTop - offset);
         }
     });
 });
@@ -378,10 +411,7 @@ window.addEventListener('scroll', () => {
 });
 
 backToTop.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    smoothScrollTo(0);
 });
 
 // Intersection Observer for Animations
@@ -560,9 +590,12 @@ document.addEventListener('mousemove', (e) => {
 const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
 emailLinks.forEach(link => {
     link.addEventListener('click', (e) => {
+        // No clipboard API (non-secure context / old browser): let mailto proceed normally
+        if (!navigator.clipboard) return;
+
         e.preventDefault();
         const email = link.textContent;
-        
+
         navigator.clipboard.writeText(email).then(() => {
             // Show tooltip or notification
             const tooltip = document.createElement('div');
@@ -587,6 +620,9 @@ emailLinks.forEach(link => {
             setTimeout(() => {
                 tooltip.remove();
             }, 2000);
+        }).catch(() => {
+            // Clipboard write denied: fall back to opening the mail client
+            window.location.href = link.href;
         });
     });
 });
